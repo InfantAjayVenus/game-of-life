@@ -129,7 +129,6 @@ export default function App() {
           </div>
         </div>
         <Grid values={stateGrid} updateGrid={setStateGrid} isEdit={isEdit} />
-        {/* <div className="flex flex-row col-span-1"></div> */}
       </div>
     </>
   )
