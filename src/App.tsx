@@ -15,7 +15,8 @@ export default function App() {
   const [liveCount, setLiveCount] = useState(0);
   const [iterationCount, setIterationCount] = useState(0);
   const [totalLiveCount, setTotalLiveCount] = useState(0);
-  const [iteratorTimer, setIteratorTimer] = useState<number|undefined>();
+  const [iteratorTimer, setIteratorTimer] = useState<number | undefined>();
+  const [autoRunFactor, setAutoRunFactor] = useState(1);
 
   useEffect(() => {
     setStateGrid(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
@@ -50,13 +51,13 @@ export default function App() {
     setTotalLiveCount(currentTotalCount => currentTotalCount + liveCount);
     setStateGrid(currentStateGrid => runGame(currentStateGrid));
     setIterationCount(iterationCount => iterationCount + 1);
-
-    if(shouldAutoIterate) {
+    
+    if (shouldAutoIterate) {
       clearTimeout(iteratorTimer);
       setIteratorTimer(
         setTimeout(() => {
-         onIterate(); 
-        }, ITERATION_TIME)
+          onIterate();
+        }, ITERATION_TIME / autoRunFactor)
       );
     }
   }
@@ -80,7 +81,7 @@ export default function App() {
               disabled={!isEdit}
             >
               Random 🔀
-              </Button>
+            </Button>
           </div>
           <div className="my-8 flex justify-around transition-all">
             <Button
@@ -109,13 +110,17 @@ export default function App() {
             </Button>
           </div>
           <div className="flex my-8 px-4 space-x-2 items-center">
-            <Checkbox 
+            <Checkbox
               id="auto-iterate-toggle"
               checked={shouldAutoIterate}
               onCheckedChange={() => setShouldAutoIterate(!shouldAutoIterate)}
               disabled={!isEdit}
             />
             <label htmlFor="auto-iterate-toggle">Run Automatically</label>
+          </div>
+          <div className="flex flex-col w-full h-16 justify-around">
+            <h4>Auto Run Speed : x{autoRunFactor}</h4>
+            <Slider defaultValue={[autoRunFactor]} min={0.5} max={2} step={0.25} onValueChange={value => setAutoRunFactor(value[0])} disabled={!isEdit || !shouldAutoIterate} />
           </div>
           <div className="my-8 px-4">
             <p>Iteration: {iterationCount}</p>
