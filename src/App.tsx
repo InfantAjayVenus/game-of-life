@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Slider } from "./@/components/ui/slider";
 import Grid from "./components/Grid";
 import Button from "./components/Button";
-import { runGame } from "./lib/GameOfLife";
+import { getRandomGame, runGame } from "./lib/GameOfLife";
 import { Checkbox } from "./@/components/ui/checkbox";
 
 const ITERATION_TIME = 1000;
@@ -74,7 +74,15 @@ export default function App() {
             <h4>Grid Size : {gridSize}</h4>
             <Slider defaultValue={[gridSize]} min={10} max={100} step={1} onValueChange={value => setGridSize(value[0])} disabled={!isEdit} />
           </div>
-          <div className="mt-16 flex justify-around transition-all">
+          <div className="my-8 py-4">
+            <Button
+              onClick={() => setStateGrid(getRandomGame(gridSize))}
+              disabled={!isEdit}
+            >
+              Random 🔀
+              </Button>
+          </div>
+          <div className="my-8 flex justify-around transition-all">
             <Button
               onClick={onStart}
               disabled={!isEdit}

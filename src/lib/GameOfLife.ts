@@ -24,3 +24,9 @@ export function runGame(gameState: Boolean[][]):Boolean[][] {
         })
     })
 }
+
+export function getRandomGame(gridSize: number): Boolean[][] {
+    return new Array(gridSize).fill(new Array(gridSize)).map(
+        row => row.fill(false).map(() => Math.random() > 0.5)
+    )
+}
