@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Slider } from "./@/components/ui/slider";
 import Grid from "./components/Grid";
 import Button from "./components/Button";
-import { runGame } from "./lib/GameOdLife";
+import { runGame } from "./lib/GameOfLife";
 import { Checkbox } from "./@/components/ui/checkbox";
 
 const ITERATION_TIME = 1000;
