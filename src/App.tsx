@@ -3,16 +3,19 @@ import { Slider } from "./@/components/ui/slider";
 import Grid from "./components/Grid";
 import Button from "./components/Button";
 import { runGame } from "./lib/GameOdLife";
+import { Checkbox } from "./@/components/ui/checkbox";
 
-
+const ITERATION_TIME = 1000;
 export default function App() {
   const [isEdit, setIsEdit] = useState(true);
+  const [shouldAutoIterate, setShouldAutoIterate] = useState(true);
   const [gridSize, setGridSize] = useState(15);
   const [stateGrid, setStateGrid] = useState(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
 
   const [liveCount, setLiveCount] = useState(0);
   const [iterationCount, setIterationCount] = useState(0);
   const [totalLiveCount, setTotalLiveCount] = useState(0);
+  const [iteratorTimer, setIteratorTimer] = useState<number|undefined>();
 
   useEffect(() => {
     setStateGrid(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
@@ -47,10 +50,20 @@ export default function App() {
     setTotalLiveCount(currentTotalCount => currentTotalCount + liveCount);
     setStateGrid(currentStateGrid => runGame(currentStateGrid));
     setIterationCount(iterationCount => iterationCount + 1);
+
+    if(shouldAutoIterate) {
+      clearTimeout(iteratorTimer);
+      setIteratorTimer(
+        setTimeout(() => {
+         onIterate(); 
+        }, ITERATION_TIME)
+      );
+    }
   }
 
   const onStop = () => {
     setIsEdit(true);
+    clearTimeout(iteratorTimer);
   }
 
   return (
@@ -70,7 +83,7 @@ export default function App() {
             </Button>
             <Button
               onClick={onIterate}
-              disabled={isEdit}
+              disabled={isEdit || shouldAutoIterate}
             >
               Next ️⏭️
             </Button>
@@ -86,6 +99,15 @@ export default function App() {
             >
               Clear ❌
             </Button>
+          </div>
+          <div className="flex my-8 px-4 space-x-2 items-center">
+            <Checkbox 
+              id="auto-iterate-toggle"
+              checked={shouldAutoIterate}
+              onCheckedChange={() => setShouldAutoIterate(!shouldAutoIterate)}
+              disabled={!isEdit}
+            />
+            <label htmlFor="auto-iterate-toggle">Run Automatically</label>
           </div>
           <div className="my-8 px-4">
             <p>Iteration: {iterationCount}</p>
