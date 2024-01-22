@@ -1,6 +1,6 @@
 import Cell from "./Cell";
 
-export default function Row({ isEdit, values, updateRow }: { isEdit: Boolean, values: Boolean[], updateRow: (updatedRowValues: Boolean[]) => void }) {
+export default function Row({ isEdit, isDraw, values, updateRow }: { isEdit: Boolean, isDraw: boolean, values: Boolean[], updateRow: (updatedRowValues: Boolean[]) => void }) {
     return (
         <>
             <div className="grid w-full grid-flow-col-dense">
@@ -8,6 +8,7 @@ export default function Row({ isEdit, values, updateRow }: { isEdit: Boolean, va
                     <>
                         <Cell
                             isEdit={isEdit}
+                            isDraw={isDraw}
                             value={cellValue}
                             updateCell={(updateCellState) => {
                                 const updatedRowState = [...values];
