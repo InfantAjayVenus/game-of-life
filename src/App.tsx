@@ -16,7 +16,7 @@ export default function App() {
   const [iterationCount, setIterationCount] = useState(0);
   const [totalLiveCount, setTotalLiveCount] = useState(0);
   const [iteratorTimer, setIteratorTimer] = useState<number | undefined>();
-  const [autoRunFactor, setAutoRunFactor] = useState(1);
+  const [autoRunFactor, setAutoRunFactor] = useState(2);
 
   useEffect(() => {
     setStateGrid(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
@@ -120,7 +120,7 @@ export default function App() {
           </div>
           <div className="flex flex-col w-full h-16 justify-around">
             <h4>Auto Run Speed : x{autoRunFactor}</h4>
-            <Slider defaultValue={[autoRunFactor]} min={0.5} max={2} step={0.25} onValueChange={value => setAutoRunFactor(value[0])} disabled={!isEdit || !shouldAutoIterate} />
+            <Slider defaultValue={[autoRunFactor]} min={0.5} max={10} step={0.25} onValueChange={value => setAutoRunFactor(value[0])} disabled={!isEdit || !shouldAutoIterate} />
           </div>
           <div className="my-8 px-4">
             <p>Iteration: {iterationCount}</p>
