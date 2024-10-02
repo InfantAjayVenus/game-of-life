@@ -124,8 +124,9 @@ export default function App() {
           </div>
           <div className="my-8 px-4">
             <p>Iteration: {iterationCount}</p>
-            <p>Current Populatation: {liveCount}</p>
-            <p>Average Populatation: {(totalLiveCount / iterationCount || 0).toFixed(2)}</p>
+            <p>Current Population: {liveCount}</p>
+            <p>Average Population: {(totalLiveCount / iterationCount || 0).toFixed(2)}</p>
+            <p>Total Population: {totalLiveCount}</p>
           </div>
         </div>
         <Grid values={stateGrid} updateGrid={setStateGrid} isEdit={isEdit} />
