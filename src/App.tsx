@@ -27,7 +27,7 @@ export default function App() {
   const { currentPopulation = 0, totalPopulation = 0, generation = 0 } = gameStats;
   return (
     <>
-      <div className="flex flex-col justify-between h-screen overflow-y-hidden">
+      <div className="flex flex-col justify-between h-screen overflow-y-hidden lg:flex-row-reverse lg:justify-around">
         <Grid
           ref={gameRef}
           gridSize={gridSize}
@@ -36,12 +36,12 @@ export default function App() {
           runningState={runningState}
           updateGameStats={updateGameStats}
         />
-        <div>
+        <div className="flex flex-col lg:h-full lg:justify-center xl:w-1/3">
           <div className="flex flex-col items-start border border-black m-4 p-4 rounded-lg">
-            <p>Generation: {generation}</p>
-            <p>Current Populatation: {currentPopulation}</p>
-            <p>Total Populatation: {totalPopulation}</p>
-            <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
+              <p>Generation: {generation}</p>
+              <p>Current Populatation: {currentPopulation}</p>
+              <p>Total Populatation: {totalPopulation}</p>
+              <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
           </div>
           <div>
             <div className="flex flex-col w-full h-12 px-4 my-2 justify-around">

@@ -6,7 +6,7 @@ export default function Cell({ value, isEdit, isDraw, updateCell }: { isEdit: Bo
                     `
                     box-border 
                     border border-black 
-                    ${isEdit? "border-black" : "border-gray-400"}
+                    ${isEdit? "border-black" : "border-gray-200"}
                     ${value ? "bg-black " : "bg-transparent "} 
                     ${value ? 'hover:bg-gray-700' : "hover:bg-gray-400"}
                     `
