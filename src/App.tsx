@@ -38,12 +38,10 @@ export default function App() {
         />
         <div>
           <div className="flex flex-col items-start border border-black m-4 p-4 rounded-lg">
-            <div className="my-8 px-4">
-              <p>Generation: {generation}</p>
-              <p>Current Populatation: {currentPopulation}</p>
-              <p>Total Populatation: {totalPopulation}</p>
-              <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
-            </div>
+            <p>Generation: {generation}</p>
+            <p>Current Populatation: {currentPopulation}</p>
+            <p>Total Populatation: {totalPopulation}</p>
+            <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
           </div>
           <div>
             <div className="flex flex-col w-full h-12 px-4 my-2 justify-around">
