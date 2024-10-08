@@ -1,72 +1,30 @@
-import { useEffect, useState } from "react";
-import { Slider } from "./@/components/ui/slider";
-import Grid from "./components/Grid";
-import Button from "./components/Button";
-import { getRandomGame, runGame } from "./lib/GameOfLife";
+import { useRef, useState } from "react";
 import { Checkbox } from "./@/components/ui/checkbox";
+import { Slider } from "./@/components/ui/slider";
+import Button from "./components/Button";
+import Grid from "./components/Grid";
+import { GameRef, GameStats } from "./types/GameRef";
+import { RunningState } from "./types/RunningState";
 
-const ITERATION_TIME = 1000;
 export default function App() {
-  const [isEdit, setIsEdit] = useState(true);
+  const gameRef = useRef<GameRef>();
   const [shouldAutoIterate, setShouldAutoIterate] = useState(true);
-  const [gridSize, setGridSize] = useState(15);
-  const [stateGrid, setStateGrid] = useState(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
+  const [gridSize, setGridSize] = useState(35);
+  const [runningState, setRunningState] = useState<RunningState>(RunningState.STOPPED);
+  const [gameStats, setGameStats] = useState<GameStats>({ currentPopulation: 0, totalPopulation: 0, generation: 0 });
 
-  const [liveCount, setLiveCount] = useState(0);
-  const [iterationCount, setIterationCount] = useState(0);
-  const [totalLiveCount, setTotalLiveCount] = useState(0);
-  const [iteratorTimer, setIteratorTimer] = useState<number | undefined>();
   const [autoRunFactor, setAutoRunFactor] = useState(2);
 
-  useEffect(() => {
-    setStateGrid(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
-  }, [gridSize])
-
-  useEffect(() => {
-
-    setLiveCount(stateGrid.reduce((sum, row) => {
-      return sum + row.filter(item => item).length;
-    }, 0));
-
-    if (liveCount === 0) {
-      onStop();
-    }
-
-  }, [stateGrid])
-
-  const onReset = () => {
-    setStateGrid(new Array(gridSize).fill([]).map(_ => new Array(gridSize).fill(false)));
-    setIterationCount(0);
-    setTotalLiveCount(0);
+  const updateGameStats = (currentPopulation: number, generation: number) => {
+    setGameStats(currentGameStats => ({
+      currentPopulation,
+      totalPopulation: generation === 1 ? currentPopulation : currentGameStats.totalPopulation + currentPopulation,
+      generation
+    }))
   }
 
-  const onStart = () => {
-    setIsEdit(false);
-    setIterationCount(0);
-    setTotalLiveCount(0);
-    onIterate();
-  }
-
-  const onIterate = () => {
-    setTotalLiveCount(currentTotalCount => currentTotalCount + liveCount);
-    setStateGrid(currentStateGrid => runGame(currentStateGrid));
-    setIterationCount(iterationCount => iterationCount + 1);
-    
-    if (shouldAutoIterate) {
-      clearTimeout(iteratorTimer);
-      setIteratorTimer(
-        setTimeout(() => {
-          onIterate();
-        }, ITERATION_TIME / autoRunFactor)
-      );
-    }
-  }
-
-  const onStop = () => {
-    setIsEdit(true);
-    clearTimeout(iteratorTimer);
-  }
-
+  const isEdit = runningState === RunningState.STOPPED;
+  const { currentPopulation = 0, totalPopulation = 0, generation = 0 } = gameStats;
   return (
     <>
       <div className="grid grid-cols-2">
@@ -77,7 +35,11 @@ export default function App() {
           </div>
           <div className="my-8 py-4">
             <Button
-              onClick={() => setStateGrid(getRandomGame(gridSize))}
+              onClick={() => {
+                if (gameRef.current) {
+                  gameRef.current?.setRandomGame();
+                }
+              }}
               disabled={!isEdit}
             >
               Random 🔀
@@ -85,25 +47,33 @@ export default function App() {
           </div>
           <div className="my-8 flex justify-around transition-all">
             <Button
-              onClick={onStart}
+              onClick={() => setRunningState(RunningState.RUNNING)}
               disabled={!isEdit}
             >
               Start ▶
             </Button>
             <Button
-              onClick={onIterate}
-              disabled={isEdit || shouldAutoIterate}
+              onClick={() => {
+                if (gameRef.current) {
+                  gameRef.current?.iterate();
+                }
+              }}
+              disabled={!isEdit || shouldAutoIterate}
             >
               Next ️⏭️
             </Button>
             <Button
-              onClick={onStop}
+              onClick={() => setRunningState(RunningState.STOPPED)}
               disabled={isEdit}
             >
               Stop ⏹️
             </Button>
             <Button
-              onClick={onReset}
+              onClick={() => {
+                if (gameRef.current) {
+                  gameRef.current?.reset();
+                }
+              }}
               disabled={!isEdit}
             >
               Clear ❌
@@ -123,13 +93,20 @@ export default function App() {
             <Slider defaultValue={[autoRunFactor]} min={0.5} max={10} step={0.25} onValueChange={value => setAutoRunFactor(value[0])} disabled={!isEdit || !shouldAutoIterate} />
           </div>
           <div className="my-8 px-4">
-            <p>Iteration: {iterationCount}</p>
-            <p>Current Population: {liveCount}</p>
-            <p>Average Population: {(totalLiveCount / iterationCount || 0).toFixed(2)}</p>
-            <p>Total Population: {totalLiveCount}</p>
+            <p>Generation: {generation}</p>
+            <p>Current Populatation: {currentPopulation}</p>
+            <p>Total Populatation: {totalPopulation}</p>
+            <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
           </div>
         </div>
-        <Grid values={stateGrid} updateGrid={setStateGrid} isEdit={isEdit} />
+        <Grid
+          ref={gameRef}
+          gridSize={gridSize}
+          autoIterateFactor={autoRunFactor}
+          shouldAutoIterate={shouldAutoIterate}
+          runningState={runningState}
+          updateGameStats={updateGameStats}
+        />
       </div>
     </>
   )
