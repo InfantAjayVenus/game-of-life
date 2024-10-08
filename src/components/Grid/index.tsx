@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { getRandomGame, runGame } from "../../lib/GameOfLife";
+import { getRandomGame, runGame } from "./lib/GameOfLife";
 import { GameProps } from "../../types/GameProps";
 import { GameStats } from "../../types/GameRef";
 import { RunningState } from "../../types/RunningState";
