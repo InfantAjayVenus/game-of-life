@@ -84,7 +84,7 @@ export default forwardRef(function ({ runningState, gridSize = 20, shouldAutoIte
     return (
         <>
             <div
-                className="p-4 w-[100vh] h-[100vh] max-h-[100vh] grid grid-flow-row"
+                className="p-1 w-[min(100vw,100vh)] h-[min(100vw,100vh)] max-h-[100vh] grid grid-flow-row"
                 onMouseDown={() => {
                     setIsDrawing(true);
                 }}
