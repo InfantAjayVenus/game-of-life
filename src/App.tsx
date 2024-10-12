@@ -5,6 +5,8 @@ import Grid from "./components/Grid";
 import { GameRef, GameStats } from "./types/GameRef";
 import { RunningState } from "./types/RunningState";
 import { Switch } from "./@/components/ui/switch";
+import SparseGrid from "./components/Sparse-Grid";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./@/components/ui/select";
 
 export default function App() {
   const gameRef = useRef<GameRef>();
@@ -12,6 +14,7 @@ export default function App() {
   const [gridSize, setGridSize] = useState(35);
   const [runningState, setRunningState] = useState<RunningState>(RunningState.STOPPED);
   const [gameStats, setGameStats] = useState<GameStats>({ currentPopulation: 0, totalPopulation: 0, generation: 0 });
+  const [implementation, setImplementation] = useState<"grid" | "sparse-grid">("grid");
 
   const [autoRunFactor, setAutoRunFactor] = useState(2);
 
@@ -22,13 +25,14 @@ export default function App() {
       generation
     }))
   }
+  const GameComponent = implementation === "grid" ? Grid : SparseGrid;
 
   const isEdit = runningState === RunningState.STOPPED;
   const { currentPopulation = 0, totalPopulation = 0, generation = 0 } = gameStats;
   return (
     <>
       <div className="flex flex-col justify-between h-screen overflow-y-hidden lg:flex-row-reverse lg:justify-around">
-        <Grid
+        <GameComponent
           ref={gameRef}
           gridSize={gridSize}
           autoIterateFactor={autoRunFactor}
@@ -36,19 +40,28 @@ export default function App() {
           runningState={runningState}
           updateGameStats={updateGameStats}
         />
-        <div className="flex flex-col lg:h-full lg:justify-center xl:w-1/3">
-          <div className="flex flex-col items-start border border-black m-4 p-4 rounded-lg">
-              <p>Generation: {generation}</p>
-              <p>Current Populatation: {currentPopulation}</p>
-              <p>Total Populatation: {totalPopulation}</p>
-              <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
+        <div className="flex flex-col px-4 lg:h-full lg:justify-center xl:w-1/3">
+          <Select defaultValue="grid" onValueChange={(implementationValue) => setImplementation(implementationValue as "grid" | "sparse-grid")}>
+            <SelectTrigger>
+              <SelectValue placeholder="Choose Implementation" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="grid">Grid</SelectItem>
+              <SelectItem value="sparse">Sparse Matrix</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <div className="flex flex-col items-start border border-black my-4 p-4 rounded-lg">
+            <p>Generation: {generation}</p>
+            <p>Current Populatation: {currentPopulation}</p>
+            <p>Average Populatation: {(totalPopulation / generation || 0).toFixed(2)}</p>
           </div>
           <div>
-            <div className="flex flex-col w-full h-12 px-4 my-2 justify-around">
+            <div className="flex flex-col w-full h-12 my-2 justify-around">
               <h4>Grid Size : {gridSize}</h4>
               <Slider defaultValue={[gridSize]} min={10} max={100} step={1} onValueChange={value => setGridSize(value[0])} disabled={!isEdit} />
             </div>
-            <div className="flex flex-col h-12 px-4 my-4 justify-around">
+            <div className="flex flex-col h-12 my-4 justify-around">
               <div className="flex justify-between">
                 <h4>Auto Run Config</h4>
                 <Switch
